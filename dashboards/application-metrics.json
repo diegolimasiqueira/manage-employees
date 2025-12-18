@@ -74,7 +74,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"container_logs\"} |~ \"manage-employees-api\" |~ \"(?i)(get|post|put|delete)\" [5m]))",
+          "expr": "sum(count_over_time({compose_project=\"manage-employees\"} |~ \"manage-employees-api\" |~ \"(?i)(get|post|put|delete)\" [5m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -142,7 +142,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"container_logs\"} |~ \"manage-employees-api\" |~ \"200\" [5m]))",
+          "expr": "sum(count_over_time({compose_project=\"manage-employees\"} |~ \"manage-employees-api\" |~ \"200\" [5m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -210,7 +210,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"container_logs\"} |~ \"manage-employees-api\" |~ \"(?i)(400|401|403|404)\" [5m]))",
+          "expr": "sum(count_over_time({compose_project=\"manage-employees\"} |~ \"manage-employees-api\" |~ \"(?i)(400|401|403|404)\" [5m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -278,7 +278,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"container_logs\"} |~ \"manage-employees-api\" |~ \"(?i)(500|502|503|504)\" [5m]))",
+          "expr": "sum(count_over_time({compose_project=\"manage-employees\"} |~ \"manage-employees-api\" |~ \"(?i)(500|502|503|504)\" [5m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -369,7 +369,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(rate({job=\"container_logs\"} |~ \"manage-employees-api\" [1m]))",
+          "expr": "sum(rate({compose_project=\"manage-employees\"} |~ \"manage-employees-api\" [1m]))",
           "legendFormat": "Taxa de Requisições/min",
           "queryType": "range",
           "refId": "A"
@@ -407,7 +407,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"container_logs\"} |~ \"manage-employees-api\" |~ \"POST /api/auth/login\"",
+          "expr": "{compose_project=\"manage-employees\"} |~ \"manage-employees-api\" |~ \"POST /api/auth/login\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -444,7 +444,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"container_logs\"} |~ \"manage-employees-api\" |~ \"(?i)(unauthorized|forbidden|authentication|permission)\"",
+          "expr": "{compose_project=\"manage-employees\"} |~ \"manage-employees-api\" |~ \"(?i)(unauthorized|forbidden|authentication|permission)\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -594,7 +594,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum by (method) (count_over_time({job=\"container_logs\"} |~ \"manage-employees-api\" | regexp \"(?P<method>GET|POST|PUT|DELETE|PATCH)\" [1m]))",
+          "expr": "sum by (method) (count_over_time({compose_project=\"manage-employees\"} |~ \"manage-employees-api\" | regexp \"(?P<method>GET|POST|PUT|DELETE|PATCH)\" [1m]))",
           "legendFormat": "{{method}}",
           "queryType": "range",
           "refId": "A"

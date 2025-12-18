@@ -82,23 +82,24 @@ services:
   loki:
     image: grafana/loki:2.9.3
     container_name: manage-employees-loki
+    user: root
     ports:
       - "3100:3100"
     volumes:
-      - ./loki-config.yml:/etc/loki/local-config.yaml
-      - loki_data:/tmp/loki
-    command: -config.file=/etc/loki/local-config.yaml
+      - ./loki-config.yml:/etc/loki/loki-config.yml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/loki-config.yml
     networks:
       - app-network
     restart: unless-stopped
 
   # Promtail - Coleta logs dos containers
   promtail:
-    image: grafana/promtail:2.9.3
+    image: grafana/promtail:3.0.0
     container_name: manage-employees-promtail
     volumes:
       - ./promtail-config.yml:/etc/promtail/config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
     command: -config.file=/etc/promtail/config.yml
     depends_on:
@@ -106,6 +107,7 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    user: root
 
   # Grafana - Visualização de logs e métricas
   grafana:

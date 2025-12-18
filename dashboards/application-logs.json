@@ -51,7 +51,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"container_logs\"} |= ``",
+          "expr": "{compose_project=\"manage-employees\"} |= ``",
           "queryType": "range",
           "refId": "A"
         }
@@ -138,7 +138,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum by (container) (count_over_time({job=\"container_logs\"}[1m]))",
+          "expr": "sum by (container) (count_over_time({compose_project=\"manage-employees\"}[1m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -205,7 +205,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"container_logs\"} |~ \"(?i)(error|exception|failed)\" [5m]))",
+          "expr": "sum(count_over_time({compose_project=\"manage-employees\"} |~ \"(?i)(error|exception|failed)\" [5m]))",
           "legendFormat": "Erros",
           "queryType": "range",
           "refId": "A"
@@ -216,7 +216,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"container_logs\"} |~ \"(?i)(warning|warn)\" [5m]))",
+          "expr": "sum(count_over_time({compose_project=\"manage-employees\"} |~ \"(?i)(warning|warn)\" [5m]))",
           "hide": false,
           "legendFormat": "Avisos",
           "queryType": "range",
@@ -255,7 +255,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"container_logs\"} |~ \"manage-employees-api\" |= ``",
+          "expr": "{compose_project=\"manage-employees\"} |~ \"manage-employees-api\" |= ``",
           "queryType": "range",
           "refId": "A"
         }
@@ -292,7 +292,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"container_logs\"} |~ \"manage-employees-web\" |= ``",
+          "expr": "{compose_project=\"manage-employees\"} |~ \"manage-employees-web\" |= ``",
           "queryType": "range",
           "refId": "A"
         }
@@ -329,7 +329,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"container_logs\"} |~ \"(?i)(error|exception|failed|fatal|critical)\"",
+          "expr": "{compose_project=\"manage-employees\"} |~ \"(?i)(error|exception|failed|fatal|critical)\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -388,7 +388,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum by (container) (count_over_time({job=\"container_logs\"}[1h]))",
+          "expr": "sum by (container) (count_over_time({compose_project=\"manage-employees\"}[1h]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -448,7 +448,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"container_logs\"}[1h]))",
+          "expr": "sum(count_over_time({compose_project=\"manage-employees\"}[1h]))",
           "legendFormat": "Total de Logs",
           "queryType": "range",
           "refId": "A"
