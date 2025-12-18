@@ -89,10 +89,8 @@ coverage/
 *.log
 docker-compose.override.yml
 
-# Loki/Promtail/Grafana
-loki_data/
-grafana_data/
-promtail_positions.yaml
+# Docker logs e volumes
+*.log
 
 # Uploads (runtime)
 **/wwwroot/uploads/

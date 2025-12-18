@@ -176,10 +176,9 @@ docker-compose up -d
 | Frontend | http://localhost | - |
 | Backend API | http://localhost:5000 | - |
 | Swagger | http://localhost:5000/swagger | - |
-| **Grafana (Logs)** | http://localhost:3000 | admin / admin123 |
+| **Dozzle (Logs)** | http://localhost:8888 | Sem login |
 | PostgreSQL | localhost:5433 | postgres / postgres123 |
 | PgAdmin | http://localhost:5050 | admin@admin.com / admin123 |
-| Loki API | http://localhost:3100 | - |
 
 > **💡 Nota:** O PostgreSQL usa a porta **5433** externamente para evitar conflito com instalações locais (porta 5432).
 
@@ -406,87 +405,51 @@ dotnet tool run reportgenerator -reports:./tests/ManageEmployees.Tests/TestResul
 - ✅ Testes de Serviços (Business Logic)
 - ✅ Testes de Repositórios (Data Access)
 
-## 📊 Observabilidade e Logs
+## 📊 Visualização de Logs (Dozzle)
 
-O projeto inclui uma **stack completa de observabilidade** com:
+O projeto inclui o **Dozzle** - uma ferramenta simples e eficiente para visualizar logs em tempo real!
 
-### Stack de Logs
+### 🚀 Acesse os Logs
 
-```
-┌─────────────────────────────────────────┐
-│            Grafana (UI)                  │
-│         Visualização de Logs             │
-│         http://localhost:3000            │
-└──────────────┬──────────────────────────┘
-               │
-               ▼
-┌──────────────────────────────────────────┐
-│            Loki                           │
-│      Agregação de Logs                   │
-│      http://localhost:3100               │
-└──────────────┬───────────────────────────┘
-               │
-               ▼
-┌──────────────────────────────────────────┐
-│          Promtail                         │
-│  Coleta logs de todos os containers      │
-└──────────────────────────────────────────┘
-```
+**URL:** http://localhost:8888
 
-### Componentes
+**Sem login necessário!** Interface limpa e intuitiva.
 
-| Componente | Função | Porta |
-|------------|--------|-------|
-| **Grafana** | Interface visual para consultar e visualizar logs | 3000 |
-| **Loki** | Sistema de agregação de logs (similar ao Elasticsearch) | 3100 |
-| **Promtail** | Agente que coleta logs dos containers Docker | - |
+### ✨ Funcionalidades
 
-### Acessando o Grafana
+- 📱 **Interface Responsiva** - Funciona em qualquer dispositivo
+- 🔴 **Tempo Real** - Veja logs conforme acontecem (live streaming)
+- 🔍 **Busca Integrada** - Filtre logs por texto
+- 📊 **Multi-Container** - Visualize logs de vários containers simultaneamente
+- 💾 **Histórico** - Acesse até 300 últimas linhas de cada container
+- 🎨 **Colorização** - Logs coloridos por nível (erro, warn, info)
+- 📥 **Download** - Baixe logs para análise offline
 
-1. Acesse: http://localhost:3000
-2. Login: `admin` / `admin123`
-3. Vá em **Configuration** > **Data Sources** > **Add data source**
-4. Selecione **Loki**
-5. Configure:
-   - **URL:** `http://loki:3100`
-   - Clique em **Save & Test**
-6. Vá em **Explore** no menu lateral
-7. Selecione **Loki** como data source
-8. Use queries para filtrar logs:
-   ```
-   {service="backend"}
-   {service="frontend"}
-   {service="postgres"}
-   {container=~"manage-employees.*"}
-   ```
+### 📋 Containers Monitorados
 
-### Queries Úteis do Loki
+O Dozzle monitora automaticamente todos os containers:
 
-```logql
-# Todos os logs do backend
-{service="backend"}
+| Container | Logs |
+|-----------|------|
+| **manage-employees-api** | Logs do Backend (.NET 8) |
+| **manage-employees-web** | Logs do Frontend (React/Nginx) |
+| **manage-employees-db** | Logs do PostgreSQL |
+| **manage-employees-pgadmin** | Logs do PgAdmin |
 
-# Logs de erro do backend
-{service="backend"} |= "error" or "Error" or "Exception"
+### 🎯 Como Usar
 
-# Logs de uma requisição específica
-{service="backend"} |= "POST /api/Employees"
+1. **Acesse** http://localhost:8888
+2. **Selecione** um container no menu lateral
+3. **Veja** os logs em tempo real!
+4. **Use a busca** (Ctrl+F ou ícone 🔍) para filtrar
+5. **Clique no ícone ⬇️** para baixar logs
 
-# Logs do PostgreSQL
-{service="postgres"}
+### 💡 Dicas
 
-# Últimas 100 linhas de todos os serviços
-{container=~"manage-employees.*"}
-```
-
-### Dashboards Recomendados
-
-Após configurar o Loki no Grafana, você pode:
-
-1. Importar dashboards prontos da comunidade
-2. Criar painéis personalizados
-3. Configurar alertas baseados em logs
-4. Visualizar logs em tempo real
+- **Multi-visualização**: Clique em "+" para abrir múltiplos containers lado a lado
+- **Pause automático**: Os logs pausam automaticamente quando você rola para cima
+- **Busca avançada**: Suporta regex para buscas complexas
+- **Tema escuro**: Interface moderna em dark mode
 
 ## 🐳 Docker
 
@@ -510,9 +473,6 @@ docker-compose version    # v1.x retorna: "docker-compose version 1.x.x"
 ```
 manage-employees/                    # ← Raiz do projeto
 ├── docker-compose.yml              # ← Orquestração de todos os serviços
-├── loki-config.yml                 # Configuração do Loki (logs)
-├── promtail-config.yml             # Configuração do Promtail (coleta logs)
-├── grafana-datasources.yml         # Datasources do Grafana
 ├── backend/
 │   ├── Dockerfile                  # Build do backend .NET 8
 │   └── .dockerignore
@@ -541,14 +501,11 @@ manage-employees/                    # ← Raiz do projeto
         ┌────────────────────┼────────────────────┐
         │                    │                    │
 ┌───────▼────────┐  ┌────────▼────────┐  ┌───────▼────────┐
-│    PgAdmin     │  │    Grafana      │  │     Loki       │
-│   Port: 5050   │  │   Port: 3000    │  │   Port: 3100   │
-└────────────────┘  └─────────────────┘  └────────┬───────┘
-                                                   │
-                                          ┌────────▼────────┐
-                                          │    Promtail     │
-                                          │  (Log Collector)│
-                                          └─────────────────┘
+│    PgAdmin     │  │     Dozzle      │  │                │
+│   Port: 5050   │  │   Port: 8888    │  │   (Logs em     │
+│                │  │  (Visualizador  │  │  Tempo Real)   │
+└────────────────┘  │   de Logs)      │  └────────────────┘
+                    └─────────────────┘
 
 * PostgreSQL: 5433 (externa) → 5432 (interna do container)
   Evita conflito com PostgreSQL local
@@ -561,8 +518,6 @@ manage-employees/                    # ← Raiz do projeto
 | `postgres_data` | Dados do banco PostgreSQL |
 | `backend_uploads` | Fotos de perfil dos funcionários |
 | `pgadmin_data` | Configurações do PgAdmin |
-| `loki_data` | Logs agregados pelo Loki |
-| `grafana_data` | Dashboards e configurações do Grafana |
 
 ### Configurando PgAdmin
 
@@ -623,60 +578,6 @@ A aplicação possui **logging estruturado completo** em todos os níveis:
 - 🌱 **Seed inicial** (criação de dados padrão)
 - ⚠️ **Erros de conexão** com o banco
 
-### Acessando o Grafana
-
-O Grafana já vem **totalmente configurado** com dashboards prontos para logs e métricas! 🎉
-
-**1. Acesse:** http://localhost:3000  
-**2. Login:** `admin` / `admin123`  
-**3. Vá em Dashboards** (ícone de quadrado no menu lateral)
-
-#### 📊 Dashboards Pré-Configurados
-
-Você encontrará 2 dashboards prontos para uso:
-
-**🔍 Sistema de Gestão de Funcionários - Logs**
-- **Logs em tempo real** de toda a aplicação
-- **Volume de logs por serviço** (gráfico de barras)
-- **Contador de erros e avisos** (gauge)
-- **Logs separados** do Backend (.NET API) e Frontend (React/Nginx)
-- **Filtro de erros e exceções** críticos
-- **Distribuição de logs** por serviço (gráfico pizza)
-- **Total de logs** na última hora
-
-**📈 Sistema de Gestão de Funcionários - Métricas**
-- **Requisições API** nos últimos 5 minutos
-- **Taxa de sucesso** (códigos 2xx)
-- **Erros de cliente** (códigos 4xx)
-- **Erros de servidor** (códigos 5xx)
-- **Gráfico de taxa** de requisições ao longo do tempo
-- **Tentativas de login** em tempo real
-- **Falhas de autenticação/autorização**
-- **Requisições por método HTTP** (GET, POST, PUT, DELETE)
-
-#### 🔧 Explore Manual (Queries Customizadas)
-
-Também pode usar o **Explore** (ícone de bússola) para queries personalizadas:
-
-```logql
-# Ver todos os logs do backend
-{job="container_logs"} |~ "manage-employees-api"
-
-# Ver erros do backend
-{job="container_logs"} |~ "manage-employees-api" |~ "(?i)(error|exception)"
-
-# Ver logs de login
-{job="container_logs"} |~ "POST /api/auth/login"
-
-# Ver logs do frontend
-{job="container_logs"} |~ "manage-employees-web"
-```
-
-**Dicas:**
-- Use o **Live** no canto superior direito dos painéis para ver logs em tempo real
-- Clique em uma linha de log para ver detalhes completos
-- Os dashboards atualizam automaticamente a cada 10 segundos
-- Todos os dashboards são editáveis - customize à vontade!
 
 ### Variáveis de Ambiente
 
