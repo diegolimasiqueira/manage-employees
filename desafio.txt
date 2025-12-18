@@ -1,0 +1,36 @@
+Descrição do desafio técnico
+Desenvolva um aplicativo para gerenciar funcionários de uma empresa fictícia onde:
+O funcionário deve ter:
+- Nome e sobrenome (Obrigatório);
+- E-mail (Obrigatório);
+- Número do documento (Único e Obrigatório);
+- Telefone (Deve ter mais de um);
+- Nome do gerente (*O gerente pode ser um funcionário);
+
+Você não pode criar um usuário com permissões superiores às do usuário atual. Em outras palavras,
+um funcionário não pode criar um líder e um líder não pode criar um diretor.
+
+- Senha (utilize boas práticas)
+- <Pode adicionar outros campos conforme desejar>;
+
+- Deve validar se a pessoa não é menor de idade.
+
+Para este desafio, você deve:
+- Criar uma API REST em .NET 8;
+
+- Adicionar funcionalidades CRUD;
+- Utilizar um banco de dados de armazenamento;
+- Entregar o código no GitHub (até a data proposta);
+- Criar um front-end em React ou Angular para consumir a API;
+
+- Documentar a API;
+
+- Realizar testes unitários.
+
+Desejável para profissionais júnior e pleno, obrigatório para sênior:
+- Utilizar containers/Docker para a solução.
+
+- Colocar/utilizar banco de dados em Docker*
+- Utilizar padrões para o aplicativo*
+- Utilizar logs*
+- Utilizar autenticação JWT*

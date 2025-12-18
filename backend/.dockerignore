@@ -1,0 +1,44 @@
+# Binários e objetos
+**/bin/
+**/obj/
+**/out/
+
+# Dependências
+**/node_modules/
+**/.nuget/
+
+# Arquivos de build
+**/*.user
+**/*.suo
+**/*.cache
+**/.vs/
+**/.vscode/
+**/.idea/
+
+# Arquivos de teste
+**/TestResults/
+**/coverage/
+
+# Arquivos temporários
+**/*.tmp
+**/*.temp
+**/.DS_Store
+**/Thumbs.db
+
+# Git
+**/.git/
+**/.gitignore
+**/.gitattributes
+
+# Docker
+**/Dockerfile
+**/docker-compose.yml
+**/.dockerignore
+
+# Logs
+**/logs/
+**/*.log
+
+# Uploads (serão criados em runtime)
+**/wwwroot/uploads/
+

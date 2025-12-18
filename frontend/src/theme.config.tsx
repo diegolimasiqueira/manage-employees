@@ -1,0 +1,17 @@
+const themeConfig = {
+    locale: 'pt', // en, da, de, el, es, fr, hu, it, ja, pl, pt, ru, sv, tr, zh
+    theme: 'light', // light, dark, system
+    menu: 'vertical', // vertical, collapsible-vertical, horizontal
+    layout: 'full', // full, boxed-layout
+    rtlClass: 'ltr', // rtl, ltr
+    animation: 'animate__fadeIn', // animate__fadeIn, animate__fadeInDown, animate__fadeInUp, animate__fadeInLeft, animate__fadeInRight, animate__slideInDown, animate__slideInLeft, animate__slideInRight, animate__zoomIn
+    navbar: 'navbar-sticky', // navbar-sticky, navbar-floating, navbar-static
+    semidark: false,
+    languageList: [
+        { code: 'pt', name: 'Português' },
+        { code: 'en', name: 'English' },
+        { code: 'es', name: 'Español' },
+    ]
+};
+
+export default themeConfig;
