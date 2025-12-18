@@ -80,6 +80,9 @@ app.UseCors("AllowAll");
 // Servir arquivos estáticos (fotos de perfil)
 app.UseStaticFiles();
 
+// Middleware de logging de requisições
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 app.UseGlobalExceptionMiddleware();
 
 app.UseAuthentication();

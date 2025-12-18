@@ -103,6 +103,11 @@ public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
         return await _dbSet.AnyAsync(e => e.RoleId == roleId && e.IsActive, cancellationToken);
     }
 
+    public async Task<int> CountByRoleAsync(Guid roleId, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.CountAsync(e => e.RoleId == roleId && e.IsActive, cancellationToken);
+    }
+
     public async Task<int> CountPendingApprovalForManagerAsync(Guid managerId, int managerHierarchyLevel, CancellationToken cancellationToken = default)
     {
         return await _dbSet

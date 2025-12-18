@@ -21,13 +21,24 @@ public class RoleService : IRoleService
     public async Task<IEnumerable<RoleDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var roles = await _unitOfWork.Roles.GetAllOrderedByHierarchyAsync(cancellationToken);
-        return roles.Select(MapToDto);
+        var roleDtos = new List<RoleDto>();
+        
+        foreach (var role in roles)
+        {
+            var employeeCount = await _unitOfWork.Employees.CountByRoleAsync(role.Id, cancellationToken);
+            roleDtos.Add(MapToDto(role, employeeCount));
+        }
+        
+        return roleDtos;
     }
 
     public async Task<RoleDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var role = await _unitOfWork.Roles.GetByIdAsync(id, cancellationToken);
-        return role != null ? MapToDto(role) : null;
+        if (role == null) return null;
+        
+        var employeeCount = await _unitOfWork.Employees.CountByRoleAsync(id, cancellationToken);
+        return MapToDto(role, employeeCount);
     }
 
     public async Task<IEnumerable<RoleSimpleDto>> GetAssignableRolesAsync(Guid currentUserId, CancellationToken cancellationToken = default)
@@ -83,7 +94,7 @@ public class RoleService : IRoleService
 
         _logger.LogInformation("Cargo criado: {Name} por {Creator}", request.Name, currentUser.Email);
 
-        return MapToDto(role);
+        return MapToDto(role, 0); // Novo cargo, sem funcionários
     }
 
     public async Task<RoleDto> UpdateAsync(Guid id, UpdateRoleRequest request, Guid currentUserId, CancellationToken cancellationToken = default)
@@ -128,7 +139,8 @@ public class RoleService : IRoleService
 
         _logger.LogInformation("Cargo atualizado: {Name} por {Editor}", request.Name, currentUser.Email);
 
-        return MapToDto(role);
+        var employeeCount = await _unitOfWork.Employees.CountByRoleAsync(id, cancellationToken);
+        return MapToDto(role, employeeCount);
     }
 
     public async Task DeleteAsync(Guid id, Guid currentUserId, CancellationToken cancellationToken = default)
@@ -164,7 +176,7 @@ public class RoleService : IRoleService
         _logger.LogInformation("Cargo excluído: {Name} por {Deleter}", role.Name, currentUser.Email);
     }
 
-    private static RoleDto MapToDto(Role role)
+    private static RoleDto MapToDto(Role role, int employeeCount)
     {
         return new RoleDto
         {
@@ -176,7 +188,8 @@ public class RoleService : IRoleService
             CanCreateEmployees = role.CanCreateEmployees,
             CanEditEmployees = role.CanEditEmployees,
             CanDeleteEmployees = role.CanDeleteEmployees,
-            CanManageRoles = role.CanManageRoles
+            CanManageRoles = role.CanManageRoles,
+            EmployeeCount = employeeCount
         };
     }
 }

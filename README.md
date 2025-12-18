@@ -578,34 +578,105 @@ manage-employees/                    # ← Raiz do projeto
 
 > **💡 Dica:** Quando conectar pelo PgAdmin que está dentro do Docker, use `postgres:5432`. Se conectar com cliente externo (DBeaver, pgAdmin local, etc.), use `localhost:5433`.
 
-### Configurando Grafana para Logs
+### O que está sendo logado?
 
-O Grafana já vem **pré-configurado** com Loki como datasource! Basta acessar e começar a usar:
+A aplicação possui **logging estruturado completo** em todos os níveis:
+
+#### 📝 Logs de Autenticação
+- ✅ **Login bem-sucedido** (usuário, IP, timestamp)
+- ❌ **Tentativas de login falhadas** (e-mail inexistente, senha incorreta, usuário não aprovado)
+- 🔐 **Mudanças de senha** (quem mudou, quando)
+- 🔄 **Reset de senha** (quem resetou, para quem)
+- 📋 **Auto-registro** (novo usuário aguardando aprovação)
+
+#### 👥 Logs de Funcionários
+- ➕ **Criação de funcionário** (quem criou, dados do novo funcionário)
+- ✏️ **Atualização de funcionário** (quem editou, quais dados foram alterados)
+- 🗑️ **Exclusão de funcionário** (quem excluiu, funcionário excluído)
+- ✅ **Aprovação de cadastro** (quem aprovou, funcionário aprovado)
+- ❌ **Rejeição de cadastro** (quem rejeitou, motivo da rejeição)
+- 📸 **Upload de foto** (funcionário, timestamp)
+- 🗑️ **Remoção de foto** (funcionário, timestamp)
+- 👤 **Atualização de perfil** (dados alterados)
+
+#### 🎭 Logs de Cargos
+- ➕ **Criação de cargo** (nome do cargo, quem criou, permissões)
+- ✏️ **Atualização de cargo** (alterações realizadas, quem atualizou)
+- 🗑️ **Exclusão de cargo** (cargo excluído, quem excluiu)
+
+#### 🌐 Logs HTTP (Todas as Requisições)
+- 📊 **Método HTTP** (GET, POST, PUT, DELETE)
+- 🛣️ **Endpoint acessado** (path completo)
+- 🔢 **Status code** (200, 201, 400, 401, 403, 404, 500, etc.)
+- ⏱️ **Tempo de resposta** (em milissegundos)
+- 👤 **Usuário que fez a requisição** (e-mail ou "Anonymous")
+- 🌍 **Endereço IP** do cliente
+
+#### ⚠️ Logs de Erros e Exceções
+- 🚨 **Erros não tratados** (exceção, stack trace, contexto completo)
+- ⚠️ **Exceções de domínio** (validação, não autorizado, não encontrado, conflito)
+- 🚫 **Acessos não autorizados** (tentativas de acesso sem permissão)
+- ❌ **Validações falhadas** (campos inválidos, regras de negócio)
+
+#### 💾 Logs de Banco de Dados
+- 🔄 **Migrations aplicadas** (sucesso ou falha)
+- 🌱 **Seed inicial** (criação de dados padrão)
+- ⚠️ **Erros de conexão** com o banco
+
+### Acessando o Grafana
+
+O Grafana já vem **totalmente configurado** com dashboards prontos para logs e métricas! 🎉
 
 **1. Acesse:** http://localhost:3000  
 **2. Login:** `admin` / `admin123`  
-**3. Vá em Explore** (ícone de bússola no menu lateral)  
-**4. Execute queries:**
+**3. Vá em Dashboards** (ícone de quadrado no menu lateral)
+
+#### 📊 Dashboards Pré-Configurados
+
+Você encontrará 2 dashboards prontos para uso:
+
+**🔍 Sistema de Gestão de Funcionários - Logs**
+- **Logs em tempo real** de toda a aplicação
+- **Volume de logs por serviço** (gráfico de barras)
+- **Contador de erros e avisos** (gauge)
+- **Logs separados** do Backend (.NET API) e Frontend (React/Nginx)
+- **Filtro de erros e exceções** críticos
+- **Distribuição de logs** por serviço (gráfico pizza)
+- **Total de logs** na última hora
+
+**📈 Sistema de Gestão de Funcionários - Métricas**
+- **Requisições API** nos últimos 5 minutos
+- **Taxa de sucesso** (códigos 2xx)
+- **Erros de cliente** (códigos 4xx)
+- **Erros de servidor** (códigos 5xx)
+- **Gráfico de taxa** de requisições ao longo do tempo
+- **Tentativas de login** em tempo real
+- **Falhas de autenticação/autorização**
+- **Requisições por método HTTP** (GET, POST, PUT, DELETE)
+
+#### 🔧 Explore Manual (Queries Customizadas)
+
+Também pode usar o **Explore** (ícone de bússola) para queries personalizadas:
 
 ```logql
 # Ver todos os logs do backend
-{service="backend"}
+{job="container_logs"} |~ "manage-employees-api"
 
 # Ver erros do backend
-{service="backend"} |= "error" or "Error"
+{job="container_logs"} |~ "manage-employees-api" |~ "(?i)(error|exception)"
 
 # Ver logs de login
-{service="backend"} |= "POST /api/Auth/login"
+{job="container_logs"} |~ "POST /api/auth/login"
 
-# Ver todos os serviços
-{container=~"manage-employees.*"}
+# Ver logs do frontend
+{job="container_logs"} |~ "manage-employees-web"
 ```
 
 **Dicas:**
-- Use o **Live** no canto superior direito para ver logs em tempo real
+- Use o **Live** no canto superior direito dos painéis para ver logs em tempo real
 - Clique em uma linha de log para ver detalhes completos
-- Use filtros para encontrar logs específicos
-- Crie dashboards personalizados para monitoramento contínuo
+- Os dashboards atualizam automaticamente a cada 10 segundos
+- Todos os dashboards são editáveis - customize à vontade!
 
 ### Variáveis de Ambiente
 

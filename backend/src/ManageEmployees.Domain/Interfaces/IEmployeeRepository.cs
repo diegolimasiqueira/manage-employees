@@ -63,6 +63,11 @@ public interface IEmployeeRepository : IRepository<Employee>
     Task<bool> ExistsWithRoleAsync(Guid roleId, CancellationToken cancellationToken = default);
     
     /// <summary>
+    /// Conta o número de funcionários com um cargo específico
+    /// </summary>
+    Task<int> CountByRoleAsync(Guid roleId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
     /// Conta funcionários pendentes de aprovação que o usuário pode aprovar
     /// </summary>
     Task<int> CountPendingApprovalForManagerAsync(Guid managerId, int managerHierarchyLevel, CancellationToken cancellationToken = default);

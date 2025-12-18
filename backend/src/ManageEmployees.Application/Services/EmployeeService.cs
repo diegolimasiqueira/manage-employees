@@ -395,6 +395,8 @@ public class EmployeeService : IEmployeeService
         await _unitOfWork.Employees.UpdateAsync(employee, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        _logger.LogInformation("Perfil atualizado: {Email}", employee.Email);
+
         // Recarregar
         employee = await _unitOfWork.Employees.GetByIdWithDetailsAsync(employeeId, cancellationToken);
 

@@ -32,6 +32,11 @@ public class GlobalExceptionMiddleware
     
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
+        var userEmail = context.User?.Identity?.Name ?? "Anonymous";
+        var method = context.Request.Method;
+        var path = context.Request.Path;
+        var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+
         var (statusCode, response) = exception switch
         {
             Domain.Exceptions.ValidationException validationEx => (
@@ -68,12 +73,15 @@ public class GlobalExceptionMiddleware
         
         if (statusCode == HttpStatusCode.InternalServerError)
         {
-            _logger.LogError(exception, "Erro não tratado: {Message}\n{StackTrace}", exception.Message, exception.StackTrace);
+            _logger.LogError(exception, 
+                "Erro não tratado em {Method} {Path} | User: {User} | IP: {IP} | Exception: {ExceptionType} | Message: {Message}",
+                method, path, userEmail, ipAddress, exception.GetType().Name, exception.Message);
         }
         else
         {
-            _logger.LogWarning("Exceção de domínio: {ExceptionType} - {Message}", 
-                exception.GetType().Name, exception.Message);
+            _logger.LogWarning(
+                "Exceção de domínio: {ExceptionType} em {Method} {Path} | User: {User} | IP: {IP} | Message: {Message}", 
+                exception.GetType().Name, method, path, userEmail, ipAddress, exception.Message);
         }
         
         context.Response.ContentType = "application/json";
